@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
 import pandas as pd 
 import os
+from os.path import isfile, join
 from striprtf.striprtf import rtf_to_text
 import re
+import datetime
 
 #55k + 57k + 58k = 170k vrstic
-
 class Row():
     def __init__(self, df, offset):
         self.data = []
@@ -21,34 +22,43 @@ class Row():
     def toString(self): # vrne vse vrstice združene
         return self.string
     def getTime(self):
-        return self.data[1]
+        date, time = self.data[1].split()
+        date = date.split('-')
+        time = time.split(':')
+        return datetime.datetime(int(date[0]), int(date[1]), int(date[2]), int(time[0]), int(time[1]), int(time[2]))
     def getA1(self): # isto kot Pomembno(?)
         return self.data[3]
     def getB1(self): # ostale novice združene
         return self.data[4]
-    def getPomembno(self):
-        return self.__addTitle(10)
-    def getNesrece(self):
-        return self.__addTitle(12)
-    def getZastoji(self):
-        return self.__addTitle(14)
-    def getVreme(self):
-        return self.__addTitle(16)
-    def getOvire(self):
-        return self.__addTitle(18)
-    def getDela(self):
-        return self.__addTitle(20)
-    def getOpozorila(self):
-        return self.__addTitle(22)
-    def getMednarodno(self):
-        return self.__addTitle(24)
-    def getSplosno(self):
-        return self.__addTitle(26)
-    def getCol(self, i):
-        return self.data[i]
+    def getPomembno(self, title=False):
+        return self.getCol(10, title)
+    def getNesrece(self, title=False):
+        return self.getCol(12, title)
+    def getZastoji(self, title=False):
+        return self.getCol(14, title)
+    def getVreme(self, title=False):
+        return self.getCol(16, title)
+    def getOvire(self, title=False):
+        return self.getCol(18, title)
+    def getDela(self, title=False):
+        return self.getCol(20, title)
+    def getOpozorila(self, title=False):
+        return self.getCol(22, title)
+    def getMednarodno(self, title=False):
+        return self.getCol(24, title)
+    def getSplosno(self, title=False):
+        return self.getCol(26, title)
+    def getCol(self, i, title=False):
+        if self.data[i] == "nan" or len(self.data[i]) < 5:
+            return ""
+        if title:
+            return self.__addTitle(i)
+        return self.data[i] + "\n"
+    def getAll(self):
+        return (self.getPomembno() + self.getNesrece() + self.getZastoji() + self.getVreme() + self.getOvire() + self.getDela() + self.getOpozorila() + self.getMednarodno() + self.getSplosno()).strip()
     def __addTitle(self, i):
         if self.data[i-1] != "nan":
-            return self.data[i-1] + "\n" + self.data[i]
+            return self.data[i-1] + ": " + self.data[i]
         return self.data[i]
 
 # prebere n vrstic od offseta naprej
@@ -74,17 +84,36 @@ def parseRTF(dir, filename):
 def convertRTFtoTXT(indir, infile, outdir):
     txt = parseRTF(indir, infile)
     head = txt.split("\n")[0]
-    print(head)
-    date = re.search(r'\d{2}\.\s\d{2}\.\s\d{4}', head).group(0).split(". ")
-    time = re.search(r'\d{2}\.\d{2}\s', head).group(0).strip().split(".")
-    outfile = f"{date[1]}-{date[1]}-{date[2]}-{time[0]}{time[1]}.txt"
-    os.makedirs(outdir, exist_ok=True)
-    with open(os.path.join(outdir, outfile), "w", encoding="utf-16") as out:
-        out.write(txt)
+    # date = re.search(r'\d{2}\.\s?\d{1,2}\.\s?\d{4}', head)
+    # time = re.search(r'\d{1,2}\.\d{2}\s?', head)
+    # if date is None or time is None:
+    #     print(head)
+    #     return
+    # date = date.group(0).split(". ")
+    # time = time.group(0).strip().split(".")
+    pattern = r'(\d{1,2})\.?\s?(\d{1,2})\.?\s?(\d{4})\s+(\d{1,2})\s?[\.,:]\s?(\d{2})'
+    match = re.search(pattern, head)
+    if match:
+        day, month, year, hour, minute = match.groups()
+        outfile = f"{day.zfill(2)}-{month.zfill(2)}-{year}-{hour.zfill(2)}{minute}.txt"
+        #print(outfile)
+        os.makedirs(outdir, exist_ok=True)
+        with open(os.path.join(outdir, outfile), "w", encoding="utf-16") as out:
+            out.write(txt)
+    # else:
+    #     print(head)
 
-# N = 10
+# pretvori celoten folder iz .rtf v .txt
+def convertAllRTFtoTXT(indir, outdir):
+    onlyfiles = [f for f in os.listdir(indir) if isfile(join(indir, f))]
+    for file in onlyfiles:
+        if file.endswith(".rtf"):
+            convertRTFtoTXT(indir, file[:-4], outdir)
+
+
+convertAllRTFtoTXT("data/Januar 2024", "data/txt")
+
+# N = 1
 # df = readRows('2024', N, 0)
 # row = Row(df, 0)
-# print(row.getB1())
-
-# convertRTFtoTXT("data", "TMP1-2024", "data/txt")
+# print(row.getAll())
