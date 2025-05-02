@@ -6,16 +6,22 @@ import re
 from datetime import timedelta
 from datetime import datetime
 from bs4 import BeautifulSoup
+from ara_2 import generate
+from pathlib import Path
 
-def get_excel_data(day,month,year,start_hour,start_minute):
 
-    df = pd.read_excel('data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx', sheet_name=str(year))
+def get_excel_data(day,month,year,end_hour,end_minute):
+
+    dir = os.path.dirname(__file__) 
+
+
+    df = pd.read_excel(os.path.join(dir, 'data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx'), sheet_name=str(year))
 
     df['Datum'] = pd.to_datetime(df['Datum'], format='%d.%m.%Y %H:%M:%S')
 
 
-    start_time = datetime(year, month, day, start_hour, start_minute)
-    end_time = start_time + timedelta(minutes=30)
+    end_time = datetime(year, month, day, end_hour, end_minute)
+    start_time = end_time - timedelta(minutes=60)
 
     #print(start_time)
     #print(end_time)
@@ -40,57 +46,98 @@ def get_excel_data(day,month,year,start_hour,start_minute):
     vreme = extract_cleaned_text(df_interval, 'ContentVremeSLO')
     zastoji = extract_cleaned_text(df_interval, 'ContentZastojiSLO')
 
+    datum = end_time.strftime("%d. %m. %Y")
+    ura = end_time.strftime("%H.%M")
 
-
-    return "Dela: " + dela + "\nMednarodno: " + mednarodno + "\nNesrece: " + nesrece + "\nOpozorila: " + opozorila + "\nOvir: " + ovire + "\nPomembno: " + pomembno + "\nSplosno: " + splosno + "\nVreme: " + vreme + "\nZastoji: " + zastoji
-
-
-
-
-
-dir = os.path.dirname(__file__) 
-dir = os.path.join(dir, 'data/txt/')
-
-test = []
-
-id = 0
-for file in os.scandir(dir):  
-    id += 1
-    if file.is_file(): 
-
-        day,month,year,time = file.path.rsplit('/', 1)[1].split(".")[0].split("-")
-        day = int(day)
-        month = int(month)
-        year = int(year)
-        hour = int(time[0:2])
-        minute = int(time[2:4])
-
-        excel_data = get_excel_data(day,month,year,hour,minute)
-
-        contents = open(file,encoding="utf-16").read()
-
-        #TODO nisem ziher glede formata za datasete
-        test.append({
-        "id": id,
-        "prompt": excel_data,
-        "completion": contents,
-        })
+    return "\nDatum: " + datum + "\nUra: " + ura + "\nDela: " + dela + "\nMednarodno: " + mednarodno + "\nNesrece: " + nesrece + "\nOpozorila: " + opozorila + "\nOvir: " + ovire + "\nPomembno: " + pomembno + "\nSplosno: " + splosno + "\nVreme: " + vreme + "\nZastoji: " + zastoji
 
 
 
+def prompts_and_responses():
 
-for t in test:
-    print(t)
-    print()
+    dir = os.path.dirname(__file__) 
+    dir = os.path.join(dir, 'data/txt/')
 
+    test = []
+
+    excel_data_list = []
+    txt_data_list = []
+
+    index = 0
+    for file in os.scandir(dir):  
+        index += 1
+        if file.is_file(): 
+
+            day,month,year,time = file.path.rsplit('/', 1)[1].split(".")[0].split("-")
+            day = int(day)
+            month = int(month)
+            year = int(year)
+            hour = int(time[0:2])
+            minute = int(time[2:4])
+
+            excel_data = get_excel_data(day,month,year,hour,minute)
+            excel_data_list.append(excel_data)
+
+            txt_data = open(file,encoding="utf-16").read()
+            txt_data_list.append(txt_data)
+
+            # TODO currently just gets first 5 pairs of data
+            if(index == 1):
+                return excel_data_list, txt_data_list
+
+            
 
 
 
 
-"""t = {
-"id": 25,
-"prompt": "Write a LinkedIn post to announce that you have accepted a new job offer.\n Input: ",
-"completion": "“I’m excited beyond words to share with you my decision to accept the role of Marketing Director at the XYZ Company!\nI couldn’t have had this opportunity if not for the help of my friend, [name], who shared this job opportunity with me, and my former boss, [boss’s name], for her stellar recommendation and guidance.\nI happily look forward to starting this new journey and growing professionally with my new family—the marketing rock stars of XYZ Company.”",
-}
 
-print(t)"""
+
+def responses_write_to_file():
+
+    dir_ = os.path.dirname(__file__) 
+    dir = os.path.join(dir_, 'data/chosen_txts/')
+
+    write_dir = os.path.join(dir_, 'data/results_txt/')
+
+    index = 0
+    for file in os.scandir(dir):  
+        index += 1
+        if file.is_file(): 
+
+            day,month,year,time = file.path.rsplit('/', 1)[1].split(".")[0].split("-")
+            day = int(day)
+            month = int(month)
+            year = int(year)
+            hour = int(time[0:2])
+            minute = int(time[2:4])
+
+            print(day,month,year,hour,minute)
+
+
+            excel_data = get_excel_data(day,month,year,hour,minute)
+
+            print("excel:")
+            print(excel_data)
+
+            result = generate(excel_data)
+
+            #print(file.name)
+
+            #txt_data = open(file,encoding="utf-16").read()
+
+            outfile = os.path.join(write_dir, "result_" + file.name)
+
+            print(result)
+            try:
+                with open(outfile, "x", encoding="utf-16") as out:
+                    out.write(result)
+            except:
+                try:
+                    with open(outfile, "a", encoding="utf-16") as out:
+                        out.write(result)
+                except:
+                    print("Could not write file!")
+
+            
+
+responses_write_to_file()

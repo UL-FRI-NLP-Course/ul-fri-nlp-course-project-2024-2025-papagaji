@@ -1,15 +1,27 @@
-from transformers import pipeline
+import transformers
 
 print("Loading model...")
 
 #model_id = "cjvt/GaMS-1B-Chat"
 model_id = "cjvt/GaMS-9B-Instruct"
 
-pipeline = pipeline(
+pipeline = transformers.pipeline(
         "text-generation",
         model=model_id,
         device_map="auto"
     )
+
+data = """Datum: 01.01.2024
+Ura: 07:00
+Dela:  Več o delovnih zaporah v prometni napovedi .
+Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, od 8. do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
+Nesrece:  
+Opozorila:  srečno in varno na cestah v letu 2024!
+Ovir:  
+Pomembno:  
+Splosno:  
+Vreme:  Ponekod v višjeležečih delih države sneži, sneg se oprijema cestišč. Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Ceste so mokre, vozite previdno.
+Zastoji:  """
 
 print("Model loaded.")
 
@@ -23,54 +35,96 @@ Prometne informacije        [datum]            [ura]             1. in 2. progra
 Podatki o prometu.
 
 [sestavljeno poročilo]
-                    
+            
+
+            
+Ti si prometni napovedovalec na Radiu Slovenija. Na podlagi spodnjih treh primerov pripravi novo prometno poročilo, ki sledi istemu slogu in obliki.
+
+Primeri:
+
+(1)
 Podatki:
-Datum: 01.01.2024
-Ura: 07:00
+Datum: 01.01.2023
+Ura: 15:30
 Dela:  Več o delovnih zaporah v prometni napovedi .
-Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, od 8. do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
+Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
 Nesrece:  
 Opozorila:  srečno in varno na cestah v letu 2024!
-Ovir:  
+Ovir:  Na štajerski avtocesti je pred preodorm Jasovnik proti Ljubljani oviran promet, okvara vozila.   Na štajerski avtocesti je pred predorom Jasovnik proti Ljubljani oviran promet, okvara vozila.
 Pomembno:  
 Splosno:  
-Vreme:  Ponekod v višjeležečih delih države sneži, sneg se oprijema cestišč. Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Ceste so mokre, vozite previdno.
+Vreme:  Na cesti čez prelaz Vršič so obvezne verige. Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.
 Zastoji:  
 
-"""}]
-
-
-response = pipeline(message, max_new_tokens=512)
-print("Model's response:\n", response[0]["generated_text"][-1]["content"])
-print("\n")
-
-
-message = [{"role": "user", "content": """
-Ti si prometni napovedovalec na Radiu Slovenija. Na podlagi spodnjih strukturiranih podatkov pripravi prometno poročilo v slogu radijskega poročanja, kot bi ga prebral napovedovalec na 1. ali 2. programu RTV Slovenija. Poročilo naj bo kratko, jasno in vključuje samo najpomembnejše informacije.
-
-Uporabi naslednjo obliko:
-
-Prometne informacije        [datum]            [ura]             1. in 2. program
+Poročilo:
+Prometne informacije        01. 01. 2024            06.00             1. in 2. program
 
 Podatki o prometu.
 
-[sestavljeno poročilo]
-                    
+Ponekod v višjeležečih delih države sneži. Prilagodite hitrost razmeram na cesti in vozite previdno. 
+
+Zaradi praznikov bo danes in jutri od 8-ih do 22-ih prepovedan promet za tovorna vozila, težja od sedem ton in pol.
+
+Cesta čez prelaza Vršič in Korensko sedlo je prevozna le z zimsko opremo.
+
+
+(2)
 Podatki:
 Datum: 01.01.2024
-Ura: 07:00
+Ura: 16:30
 Dela:  Več o delovnih zaporah v prometni napovedi .
-Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, od 8. do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
-Nesrece:  
+Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
+Nesrece:  Na štajerski avtocesti je pred počivališčem Dobrenje proti Šentilju oviran promet.   Na štajerski avtocesti je pred počivališčem Dobrenje proti Šentilju oviran promet. Na ljubljanski severni obvoznici je pred priključkom Tomačevo zaprt prehitevalni pas proti Kosezam.
 Opozorila:  srečno in varno na cestah v letu 2024!
-Ovir:  
+Ovir:  Na štajerski avtocesti povožena žival ovira promet pred Celjem center proti Ljubljani.
 Pomembno:  
 Splosno:  
-Vreme:  Ponekod v višjeležečih delih države sneži, sneg se oprijema cestišč. Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Ceste so mokre, vozite previdno.
+Vreme:  Na cesti čez prelaz Vršič so obvezne verige. Voznike opozarjamo, da je na prelazih (ali: na nekaterih višjeležečih cestah) v primeru snega obvezna uporaba verig.
 Zastoji:  
 
-            
-Uporabi naslednje smernice:
+Poročilo:
+NOVE Prometne informacije.       31. 01. 2024            15.30             1. in 2. program
+
+Podatki o prometu.
+
+Na podravski avtocesti proti Gruškovju je zaradi prometne nesreče zaprt vozni pas med priključkoma Lancova vas in Podlehnik.
+
+Na štajerski avtocesti proti Mariboru so odstranili posledice nesreče  med razcepom Zadobrova in priključkom Sneberje. Še vedno so tam daljši zastoji, ki segajo na vzhodno in severno ljubljansko obvoznico. 
+
+Tudi na regionalni cesti Kranj-Škofja Loka promet pri Svetem Duhu ni več oviran.
+
+Na primorski avtocesti je med Logatcem in Vrhniko promet proti Ljubljani oviran zaradi pokvarjenega tovornjaka.
+
+Zaradi del promet skozi predor Karavanke poteka izmenično enosmerno.
+
+
+(3)
+Podatki:
+Datum: 01.01.2024
+Ura: 09:00
+Vreme: Sneži v višjih predelih države. Ceste so mokre, na prelazih verige obvezne.
+
+Poročilo:
+Prometne informacije.       31. 01. 2024            16.30             2. program
+
+Podatki o prometu.
+
+Zastoji so na vzhodni in severni ljubljanski obvoznici proti Štajerski ter na južni obvoznici proti Dolenjski.
+
+Na podravski avtocesti so odstranili posledice nesreče med priključkoma Lancova vas in Podlehnik.
+
+Na primorski avtocesti proti Ljubljani je zaradi pokvarjenega tovornjaka promet oviran med Logatcem in Vrhniko.
+
+Pokvarjeno vozilo ovira promet tudi na štajerski avtocesti pred priključkom Fram proti Mariboru.
+
+
+---
+
+Zdaj pripravi novo poročilo na podlagi naslednjih podatkov:
+
+Podatki:
+""" + data + """
+Pri tem uporabi naslednje smernice:
 LJUBLJANA-KOPER – PRIMORSKA AVTOCESTA/ proti Kopru/proti Ljubljani
 LJUBLJANA-OBREŽJE – DOLENJSKA AVTOCESTA / proti Obrežju/ proti Ljubljani
 LJUBLJANA-KARAVANKE – GORENJSKA AVTOCESTA/ proti Karavankam ali Avstriji/ proti Ljubljani
@@ -176,117 +230,6 @@ Na vipavski hitri cesti je promet znova dovoljen za vsa vozila.
 
 Do 21-ih velja prepoved prometa tovornih vozil, katerih največja dovoljena masa presega 7 ton in pol.
 Od 8-ih do 21-ih velja prepoved prometa tovornih vozil, katerih največja dovoljena masa presega 7 ton in pol, na primorskih cestah ta prepoved velja do 22-ih.
-"""}]
-
-
-
-response = pipeline(message, max_new_tokens=512)
-print("Model's response:\n", response[0]["generated_text"][-1]["content"])
-print("\n")
-
-
-
-# Few shot
-message = [{"role": "user", "content": """
-Ti si prometni napovedovalec na Radiu Slovenija. Na podlagi spodnjih strukturiranih podatkov pripravi prometno poročilo v slogu radijskega poročanja, kot bi ga prebral napovedovalec na 1. ali 2. programu RTV Slovenija. Poročilo naj bo kratko, jasno in vključuje samo najpomembnejše informacije.
-
-Ti si prometni napovedovalec na Radiu Slovenija. Na podlagi spodnjih treh primerov pripravi novo prometno poročilo, ki sledi istemu slogu in obliki.
-
-Primeri:
-
-(1)
-Podatki:
-Datum: 01.01.2023
-Ura: 15:30
-Dela:  Več o delovnih zaporah v prometni napovedi .
-Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
-Nesrece:  
-Opozorila:  srečno in varno na cestah v letu 2024!
-Ovir:  Na štajerski avtocesti je pred preodorm Jasovnik proti Ljubljani oviran promet, okvara vozila.   Na štajerski avtocesti je pred predorom Jasovnik proti Ljubljani oviran promet, okvara vozila.
-Pomembno:  
-Splosno:  
-Vreme:  Na cesti čez prelaz Vršič so obvezne verige. Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.
-Zastoji:  
-
-Poročilo:
-Prometne informacije        01. 01. 2024            06.00             1. in 2. program
-
-Podatki o prometu.
-
-Ponekod v višjeležečih delih države sneži. Prilagodite hitrost razmeram na cesti in vozite previdno. 
-
-Zaradi praznikov bo danes in jutri od 8-ih do 22-ih prepovedan promet za tovorna vozila, težja od sedem ton in pol.
-
-Cesta čez prelaza Vršič in Korensko sedlo je prevozna le z zimsko opremo.
-
-
-(2)
-Podatki:
-Datum: 01.01.2024
-Ura: 16:30
-Dela:  Več o delovnih zaporah v prometni napovedi .
-Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
-Nesrece:  Na štajerski avtocesti je pred počivališčem Dobrenje proti Šentilju oviran promet.   Na štajerski avtocesti je pred počivališčem Dobrenje proti Šentilju oviran promet. Na ljubljanski severni obvoznici je pred priključkom Tomačevo zaprt prehitevalni pas proti Kosezam.
-Opozorila:  srečno in varno na cestah v letu 2024!
-Ovir:  Na štajerski avtocesti povožena žival ovira promet pred Celjem center proti Ljubljani.
-Pomembno:  
-Splosno:  
-Vreme:  Na cesti čez prelaz Vršič so obvezne verige. Voznike opozarjamo, da je na prelazih (ali: na nekaterih višjeležečih cestah) v primeru snega obvezna uporaba verig.
-Zastoji:  
-
-Poročilo:
-NOVE Prometne informacije.       31. 01. 2024            15.30             1. in 2. program
-
-Podatki o prometu.
-
-Na podravski avtocesti proti Gruškovju je zaradi prometne nesreče zaprt vozni pas med priključkoma Lancova vas in Podlehnik.
-
-Na štajerski avtocesti proti Mariboru so odstranili posledice nesreče  med razcepom Zadobrova in priključkom Sneberje. Še vedno so tam daljši zastoji, ki segajo na vzhodno in severno ljubljansko obvoznico. 
-
-Tudi na regionalni cesti Kranj-Škofja Loka promet pri Svetem Duhu ni več oviran.
-
-Na primorski avtocesti je med Logatcem in Vrhniko promet proti Ljubljani oviran zaradi pokvarjenega tovornjaka.
-
-Zaradi del promet skozi predor Karavanke poteka izmenično enosmerno.
-
-
-(3)
-Podatki:
-Datum: 01.01.2024
-Ura: 09:00
-Vreme: Sneži v višjih predelih države. Ceste so mokre, na prelazih verige obvezne.
-
-Poročilo:
-Prometne informacije.       31. 01. 2024            16.30             2. program
-
-Podatki o prometu.
-
-Zastoji so na vzhodni in severni ljubljanski obvoznici proti Štajerski ter na južni obvoznici proti Dolenjski.
-
-Na podravski avtocesti so odstranili posledice nesreče med priključkoma Lancova vas in Podlehnik.
-
-Na primorski avtocesti proti Ljubljani je zaradi pokvarjenega tovornjaka promet oviran med Logatcem in Vrhniko.
-
-Pokvarjeno vozilo ovira promet tudi na štajerski avtocesti pred priključkom Fram proti Mariboru.
-
-
----
-
-Zdaj pripravi novo poročilo na podlagi naslednjih podatkov:
-
-Podatki:
-Datum: 01.01.2024
-Ura: 07:00
-Dela:  Več o delovnih zaporah v prometni napovedi .
-Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, od 8. do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
-Nesrece:  
-Opozorila:  srečno in varno na cestah v letu 2024!
-Ovir:  
-Pomembno:  
-Splosno:  
-Vreme:  Ponekod v višjeležečih delih države sneži, sneg se oprijema cestišč. Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Megla ponekod po državi zmanjšuje vidljivost.   Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.  Ceste so mokre, vozite previdno.
-Zastoji:  
-
 """}]
 
 
