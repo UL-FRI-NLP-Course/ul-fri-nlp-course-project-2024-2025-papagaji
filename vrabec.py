@@ -3,12 +3,12 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 
 
-df = pd.read_excel('data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx', sheet_name='2024')
+df = pd.read_excel('data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx', sheet_name='2022')
 
 df['Datum'] = pd.to_datetime(df['Datum'], format='%d.%m.%Y %H:%M:%S')
 
-start_time = datetime(2024, 1, 1, 16, 0)
-end_time = datetime(2024, 1, 1, 16, 30)
+start_time = datetime(2022, 1, 1, 6, 0)
+end_time = datetime(2022, 1, 1, 6, 30)
 df_interval = df[(df['Datum'] >= start_time) & (df['Datum'] < end_time)]
 
 

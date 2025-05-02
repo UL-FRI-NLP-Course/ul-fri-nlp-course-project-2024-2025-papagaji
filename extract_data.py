@@ -111,7 +111,7 @@ def convertAllRTFtoTXT(indir, outdir):
             convertRTFtoTXT(indir, file[:-4], outdir)
 
 
-convertAllRTFtoTXT("data/Januar 2024", "data/txt")
+convertAllRTFtoTXT("data/Januar 2022", "data/txt")
 
 # N = 1
 # df = readRows('2024', N, 0)
