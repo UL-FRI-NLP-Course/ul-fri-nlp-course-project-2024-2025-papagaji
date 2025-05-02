@@ -10,11 +10,6 @@ from datasets import load_dataset
 
 
 
-1/0
-
-
-
-
 model_name = "cjvt/GaMS-9B-Instruct"
 
 bnb_config = BitsAndBytesConfig(
