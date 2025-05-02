@@ -5,12 +5,11 @@ def generate(data):
 
     #model_id = "cjvt/GaMS-1B-Chat"
     model_id = "cjvt/GaMS-9B-Instruct"
-    
 
     pipeline = transformers.pipeline(
             "text-generation",
             model=model_id,
-            device_map="auto"
+            device_map="auto",
         )
 
     print("Model loaded.")
@@ -19,7 +18,7 @@ def generate(data):
     Najpomembnejša navodila, ki jih ne smeš ignorirati so tista, pred katerimi piše POMEMBNO.
     Ti si prometni napovedovalec na Radiu Slovenija. Na podlagi spodnjih strukturiranih podatkov pripravi prometno poročilo v slogu radijskega poročanja, kot bi ga prebral napovedovalec na 1. ali 2. programu RTV Slovenija. Poročilo naj bo kratko, jasno in vključuje samo najpomembnejše informacije.
 
-    POMEMBNO: Uporabi naslednjo obliko:
+    Uporabi naslednjo obliko:
 
     Prometne informacije        [datum]            [ura]             1. in 2. program
 
@@ -29,28 +28,23 @@ def generate(data):
                 
 
                 
-    Ti si prometni napovedovalec na Radiu Slovenija. Na podlagi spodnjega primera pripravi novo prometno poročilo, ki sledi istemu slogu in obliki.
-
-                Spodaj je naveden primer podatkov, označen s črko A), in pripadajoče poročilo, označeno z B). Podano poročilo je primer, ki ga moraš generirati iz podatkov, ki so ti dani:
-    POMEMBNO: To niso podatki, ki jih mora vsebovati TVOJE poročilo. To je primer drugega poročila, ki vsebuje drugačne podatke kot tvoje! Podatkov A) ne uporabljaj, razen če se pojavijo tudi med tvojimi podatki C)
+    Ti si prometni napovedovalec na Radiu Slovenija. Na podlagi spodnjih treh primerov pripravi novo prometno poročilo, ki sledi istemu slogu in obliki.
     
-    POMEMBNO: Poročilo B) vsebuje podatke označene z A), tvoje poročilo mora biti sestavljeno iz podatkov, označenih z C), te podatke opiši z drugimi besedami, malo drugače!
-
-    Podatki A):
+    Spodaj je naveden primer podatkov, označen s črko A), in pripadajoče poročilo, označeno z B). Podano poročilo je primer, ki ga moraš generirati iz podatkov, ki so ti dani:
+    POMEMBNO: To niso podatki, ki jih mora vsebovati TVOJE poročilo. To je primer drugega poročila, ki vsebuje drugačne podatke kot tvoje!
+    Naslednjih podatkov ne uporabi v svojem poročilu:
+    
+    A)
     Podatki za 1. primer:
     Datum: 01.01.2023
     Ura: 15:30
     Dela:  Več o delovnih zaporah v prometni napovedi .
     Mednarodno:  Zaradi praznikov velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t: - danes, do 22. ure; - v torek, 2. januarja, od 8. do 22. ure.
-    Nesrece:  
     Opozorila:  srečno in varno na cestah v letu 2024!
-    Ovir:  Na štajerski avtocesti je pred preodorm Jasovnik proti Ljubljani oviran promet, okvara vozila.   Na štajerski avtocesti je pred predorom Jasovnik proti Ljubljani oviran promet, okvara vozila.
-    Pomembno:  
-    Splosno:  
+    Ovir:  Na štajerski avtocesti je pred preodorm Jasovnik proti Ljubljani oviran promet, okvara vozila.   Na štajerski avtocesti je pred predorom Jasovnik proti Ljubljani oviran promet, okvara vozila. 
     Vreme:  Na cesti čez prelaz Vršič so obvezne verige. Voznike opozarjamo, da je na prelazih (ali: na nekaterih cestah) v primeru snega obvezna uporaba verig.
-    Zastoji:  
 
-    Poročilo B):
+    B)
     1. poročilo:
     Prometne informacije        01. 01. 2023            15:30             1. in 2. program
 
@@ -62,20 +56,25 @@ def generate(data):
 
     Cesta čez prelaza Vršič in Korensko sedlo je prevozna le z zimsko opremo.
 
+    Navedene podatke najprej preoblikuj, šele potem jih vstavi v pravilen format poročila!
+    Če torej v podatkih piše na primer "Ob 17.00 dež, pazite, mokre ceste!", potem namesto tega napiši na primer "Ob petih popoldne bo začelo deževati, zato bodite previdni med vožnjo zaradi mokrih cest."
                 
-    Navedene podatke najprej preoblikuj, šele potem jih vstavi v pravilen format poročila. Podatkov ne smeš dobesedno prepisati v poročilo, še vedno pa mora poročilo vsebovati podobno besedilo, sestavljeno iz podatkov.
-    Primer: Če torej v podatkih piše na primer "Ob 17.00 dež, pazite, mokre ceste!", potem namesto tega napiši na primer "Ob petih popoldne bo začelo deževati, zato bodite previdni med vožnjo zaradi mokrih cest."
-                
-    Naslednji podatki vsebujejo informacije, na podlagi katerih ustvari novo poročilo, pri tem upoštevaj, da ne smejo biti dobesedno prepisani. Vsako vrstico podatkov najprej malo spremeni, nato pa spremenjeno besedilo vstavi v poročilo!
+    POMEMBNO: Ne prepisuj podatkov v poročilo dobesedno, ampak jih preoblikuj, da bo bolj berljivo.
+    POMEMBNO: V poročilu se ne ponavljaj, istih podatkov ne izpiši večkrat.
+    POMEMBNO: Če imaš na voljo več podatkov, potem uporabi vsaj dva. 
+    POMEMBNO: Za vsak podatek generiraj besedilo v novo vrstico.
+    POMEMBNO: Naslednji podatk vsebujejo informacije, na podlagi katerih ustvari novo poročilo:
 
-    Podatki C):
+    ZAČETEK PODATKOV
+
     """ + data + """
-    
-
-    ---
 
     
-    Pomagaj si z naslednjimi smernicami pri oblikovanju besedila:
+    -----
+    
+    
+    Pri oblikovanju si pomagaj z naslednjimi smernicami, to NISO podatki:
+    
     LJUBLJANA-KOPER – PRIMORSKA AVTOCESTA/ proti Kopru/proti Ljubljani
     LJUBLJANA-OBREŽJE – DOLENJSKA AVTOCESTA / proti Obrežju/ proti Ljubljani
     LJUBLJANA-KARAVANKE – GORENJSKA AVTOCESTA/ proti Karavankam ali Avstriji/ proti Ljubljani
@@ -188,5 +187,3 @@ def generate(data):
     response = pipeline(message, max_new_tokens=512)
 
     return response[0]["generated_text"][-1]["content"]
-
-
