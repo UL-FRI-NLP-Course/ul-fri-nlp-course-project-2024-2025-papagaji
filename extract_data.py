@@ -111,7 +111,14 @@ def convertAllRTFtoTXT(indir, outdir):
             convertRTFtoTXT(indir, file[:-4], outdir)
 
 
-convertAllRTFtoTXT("data/Januar 2022", "data/txt")
+dir = os.path.dirname(__file__) 
+path1 = os.path.join(dir, "data/RTVSlo/Podatki - rtvslo.si")
+path2 = os.path.join(dir, "data/txts")
+
+
+for subdir, dirs, files in os.walk(path1):
+    
+    convertAllRTFtoTXT(subdir, path2)
 
 # N = 1
 # df = readRows('2024', N, 0)
