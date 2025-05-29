@@ -2,22 +2,26 @@ import pandas as pd
 import os
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
+import json
 import re
 
-def getFromInterval(df, end):
-    start = end - timedelta(minutes=60)
+def getFromInterval(df, end, rec=0, delta=45):
+    dir = os.path.dirname(__file__) 
+
+    # end_time = datetime(year, month, day, end_hour, end_minute)
+    start = end - timedelta(minutes=delta)
     df_interval = df[(df['Datum'] >= start) & (df['Datum'] < end)]
 
     out = ""
     pomembno = extract_cleaned_text(df_interval, 'ContentPomembnoSLO')
     if pomembno != "":
         out += "Pomembno: " + pomembno + "\n"
-    opozorila = extract_cleaned_text(df_interval, 'ContentOpozorilaSLO')
-    if opozorila != "":
-        out += "Opozorila: " + opozorila + "\n"
     nesrece = extract_cleaned_text(df_interval, 'ContentNesreceSLO')
     if nesrece != "":
         out += "Nesreče: " + nesrece + "\n"
+    opozorila = extract_cleaned_text(df_interval, 'ContentOpozorilaSLO')
+    if opozorila != "":
+        out += "Opozorila: " + opozorila + "\n"
     zastoji = extract_cleaned_text(df_interval, 'ContentZastojiSLO')
     if zastoji != "":
         out += "Zastoji: " + zastoji + "\n"
@@ -36,20 +40,22 @@ def getFromInterval(df, end):
     splosno = extract_cleaned_text(df_interval, 'ContentSplosnoSLO')
     if splosno != "":
         out += "Splošno: " + splosno
+    if out == "" and rec < 5:
+        out = getFromInterval(df, start, rec + 1, 30) #try again with older data
     return out
 
 
-def prompts_and_responses():
+def prompts_and_responses(year=2024, chosen_txts_dir='out/chosen_txts/'):
     dir = os.path.dirname(__file__) 
-    dir = os.path.join(dir, 'chosen/chosen_txts/') # nastavi pravilen path !!!
-    test = []
+    dir_txts = os.path.join(dir, chosen_txts_dir) 
 
     excel_data_list = []
     txt_data_list = []
+    file_list = []
     index = 0
-    df = pd.read_excel('data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx', sheet_name="2024", engine='openpyxl', skiprows=0)
+    df = pd.read_excel('data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx', sheet_name=str(year), engine='openpyxl', skiprows=0)
     df['Datum'] = pd.to_datetime(df['Datum'], format='%d.%m.%Y %H:%M:%S')
-    for file in os.scandir(dir):  
+    for file in os.scandir(dir_txts):  
         index += 1
         if file.is_file(): 
             
@@ -61,19 +67,17 @@ def prompts_and_responses():
             minute = int(time[2:4])
 
             end = datetime(year, month, day, hour-1, minute)
-            print("DATUM: ", end)
             excel_data = getFromInterval(df, end)
             excel_data_list.append(excel_data)
+            file_list.append(file)
 
             with open(file, 'r', encoding='utf-16') as file:
-                lines = file.readlines()[1:]
+                lines = file.readlines()
+                # lines = file.readlines()[1:]
                 txt_data = ''.join(lines)
                 txt_data_list.append(txt_data)
-            # print(excel_data)
-            # print("-----------------------------------------------")
-            # print(txt_data)
-            # print("-----------------------------------------------")
-    return excel_data_list, txt_data_list
+
+    return excel_data_list, txt_data_list, file_list
 
 def extract_cleaned_text(df_rows, column_name):
     texts = df_rows[column_name].dropna().tolist()
@@ -90,4 +94,4 @@ def extract_cleaned_text(df_rows, column_name):
                         dupli.append(stavki[j])
     unique_texts = list(set(dupli))  # Remove duplicates
     return ' '.join(unique_texts)
-    # return BeautifulSoup(combined, 'html.parser').get_text(separator=' ').strip()
+
