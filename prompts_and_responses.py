@@ -15,7 +15,7 @@ def get_excel_data(day,month,year,end_hour,end_minute):
     dir = os.path.dirname(__file__) 
 
 
-    df = pd.read_excel(os.path.join(dir, 'data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx'), sheet_name=str(year))
+    df = pd.read_excel(os.path.join(dir, 'data/RTVSlo/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx'), sheet_name=str(year))
 
     df['Datum'] = pd.to_datetime(df['Datum'], format='%d.%m.%Y %H:%M:%S')
 
@@ -131,14 +131,14 @@ def prompts_and_responses():
 
 
 
-def responses_write_to_file():
+def responses_write_to_file(chosen_txts_dir='generate_responses_prompt_engineering/chosen_txts/',results_dir='generate_responses_prompt_engineering/results_txt/',inputs_dir='generate_responses_prompt_engineering/inputs/',generate_responses=True):
 
     dir_ = os.path.dirname(__file__) 
-    dir = os.path.join(dir_, 'data/chosen_txts/')
+    dir = os.path.join(dir_, chosen_txts_dir)
 
-    write_dir = os.path.join(dir_, 'data/results_txt/')
+    write_dir = os.path.join(dir_, results_dir)
 
-    write_dir_inputs = os.path.join(dir_, 'data/inputs/')
+    write_dir_inputs = os.path.join(dir_, inputs_dir)
 
     index = 0
     for file in os.scandir(dir):  
@@ -170,7 +170,9 @@ def responses_write_to_file():
             print("excel:")
             print(excel_data)
 
-            result = generate(excel_data)
+            result = ""
+            if (generate_responses):
+                result = generate(excel_data)
 
             #print(file.name)
 
@@ -178,15 +180,17 @@ def responses_write_to_file():
 
 
             print(result)
-            try:
-                with open(outfile, "x", encoding="utf-16") as out:
-                    out.write(result)
-            except:
+
+            if(generate_responses):
                 try:
-                    with open(outfile, "w", encoding="utf-16") as out:
+                    with open(outfile, "x", encoding="utf-16") as out:
                         out.write(result)
                 except:
-                    print("Could not write file!")
+                    try:
+                        with open(outfile, "w", encoding="utf-16") as out:
+                            out.write(result)
+                    except:
+                        print("Could not write file!")
 
             try:
                 with open(outfile_inputs, "x", encoding="utf-16") as out:
@@ -200,4 +204,4 @@ def responses_write_to_file():
 
             
 
-responses_write_to_file()
+responses_write_to_file(generate_responses=False)

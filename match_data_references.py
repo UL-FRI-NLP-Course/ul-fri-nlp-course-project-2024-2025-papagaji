@@ -1,6 +1,7 @@
 import os
 from sentence_transformers import SentenceTransformer
 from scipy.spatial import distance
+from prompts_and_responses import responses_write_to_file
 
 
 dir = os.path.dirname(__file__) 
@@ -8,6 +9,8 @@ inputs = os.path.join(dir, "fine_tuning_training/excel_data/")
 references = os.path.join(dir, "fine_tuning_training/references/")
 matched_inputs = os.path.join(dir, "fine_tuning_training/matched_data/")
 matched_references = os.path.join(dir, "fine_tuning_training/matched_references/")
+
+responses_write_to_file(chosen_txts_dir=references,inputs_dir=inputs,generate_responses=False)
 
 input_files_lines = []
 references_files_lines = []
