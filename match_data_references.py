@@ -78,10 +78,10 @@ for k in range(len(input_files_lines)):
             output_file_references += "\n" + best_match + "\n"
 
 
+    if(not (output_file_inputs == "" or output_file_references == "")):
 
+        with open(matched_inputs + str(k) + ".txt", "w",encoding="utf-16") as file:
+            file.write(output_file_inputs)
 
-    with open(matched_inputs + str(k) + ".txt", "w",encoding="utf-16") as file:
-        file.write(output_file_inputs)
-
-    with open(matched_references + str(k) + ".txt", "w",encoding="utf-16") as file:
-        file.write(output_file_references)
+        with open(matched_references + str(k) + ".txt", "w",encoding="utf-16") as file:
+            file.write(output_file_references)
