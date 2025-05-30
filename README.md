@@ -127,3 +127,11 @@ You can check the status of your job with:
 squeue --me
 ```
 
+
+### Contact
+For any questions or issues, please contact:
+- mb5919@student.uni-lj.si
+- zm8277@student.uni-lj.si
+- pm1710@student.uni-lj.si
+
+
