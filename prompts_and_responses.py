@@ -12,7 +12,7 @@ from pathlib import Path
 
 def get_excel_data(day,month,year,end_hour,end_minute):
     dir = os.path.dirname(__file__) 
-    df = pd.read_excel(os.path.join(dir, 'data/RTVSlo/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx'), sheet_name=str(year))
+    df = pd.read_excel(os.path.join(dir, 'data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx'), sheet_name=str(year))
 
     df['Datum'] = pd.to_datetime(df['Datum'], format='%d.%m.%Y %H:%M:%S')
 

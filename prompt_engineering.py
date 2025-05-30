@@ -86,7 +86,7 @@ def executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top
 
 # model_path = "./mistral_7b_local"
 model_path = "./gams_9b_local"
-excel, txts, files = inputs_and_responses(year=2023, chosen_txts_dir='data/2023/')
+excel, txts, files = inputs_and_responses(year=2023, chosen_txts_dir='2023/')
 gc.collect()
 torch.cuda.empty_cache()
 torch.cuda.reset_peak_memory_stats()
@@ -109,7 +109,7 @@ print(getPromptSLO(""))
 path = os.path.dirname(__file__) 
 for data, txt, file in zip(excel, txts, files):
     try:
-        with open("out/inputs/data_" + file.name, "w", encoding="utf-16") as out:
+        with open("prompt_engineering_results/inputs/data_" + file.name, "w", encoding="utf-16") as out:
             out.write(data)
     except Exception as e:
         print(e)
@@ -130,9 +130,9 @@ for data, txt, file in zip(excel, txts, files):
     print("---------------------ROUGE------------------------")
     print(results)
     try:
-        with open("out/results/out_" + file.name, "w", encoding="utf-16") as out:
+        with open("prompt_engineering_results/results/out_" + file.name, "w", encoding="utf-16") as out:
             out.write(result)
-        with open("out/compare/com_" + file.name, "w", encoding="utf-16") as out:
+        with open("prompt_engineering_results/compare/com_" + file.name, "w", encoding="utf-16") as out:
             out.write("-----------------------OUTPUT-----------------------\n" + result + "\n----------------------REFERENCE----------------------\n" + txt)
     except Exception as e:
         print(e)

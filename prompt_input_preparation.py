@@ -41,7 +41,7 @@ def getFromInterval(df, end, rec=0, delta=45):
     return out
 
 
-def inputs_and_responses(year=2023, chosen_txts_dir='out/chosen_txts/'):
+def inputs_and_responses(year=2023, chosen_txts_dir='2023/'):
     dir = os.path.dirname(__file__) 
     dir_txts = os.path.join(dir, chosen_txts_dir) 
 

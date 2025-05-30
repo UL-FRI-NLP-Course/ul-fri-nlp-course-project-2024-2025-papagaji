@@ -6,12 +6,16 @@ This repository contains the full implementation of an NLP project developed for
 
 - `report/report.pdf` – Final project report  
 - `data/` – Raw and processed data used for training, evaluation, and testing  
-- `evalvacija/` – Contains generated predictions and references for evaluation  
-- `ara_2.py` – Prompt-based report generation script  
-- `extract_data.py` – Converts `.rtf` reference files to `.txt`  
-- `vrabec.py` – Extracts relevant data from the Excel table for a given time window  
+- `evalvacija/` – Contains generated predictions and references for evaluation  (old)
+- `extract_data.py` – Converts `.rtf` reference files to `.txt` 
 - `rouge.py` – Computes ROUGE scores to evaluate generated outputs  
-- `prompts_and_responses.py` – Generates reports using prompt engineering with relevant input data  
+- `ara_2.py` – Prompt-based report generation script  (old)
+- `prompts_and_responses.py` – Generates reports using prompt engineering with relevant input data  (old)
+
+### 📝 Prompt engineering Scripts
+- `model_download.py` - Locally downloads the GaMS 9B model (needs 35 GB disk space)
+- `prompt_input_preparation.py` – Fetches inputs required for prompt engineering
+- `prompt_engineering.py` – Runs LLM using a prompt, writing output to `./prompt_engineering_results`
 
 ### 📦 Fine-tuning Scripts
 
@@ -91,6 +95,17 @@ python fine_tuning.py
 The trained model will be saved in llm_finetune_9/.
 
 
+### 📝 6. Running prompt engineering
+1. Download the model:
+```bash
+python model_download.py
+```
+
+2. Run the prompt engineering script on 2023 dataset (must have excel data in `data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx`):
+```bash
+python prompt_engineering.py
+```
+
 ### 📊 Evaluation
 Run rouge.py to compute ROUGE scores between generated outputs and reference reports.
 
@@ -106,6 +121,4 @@ You can check the status of your job with:
 ```bash
 squeue --me
 ```
-
-
 
