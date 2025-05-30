@@ -26,7 +26,7 @@ base_folder = 'data/Podatki - rtvslo.si/Promet 2024/'
 for month_folder in os.listdir(base_folder):
     full_month_path = os.path.join(base_folder, month_folder)
 
-    converted_folder = os.path.join(full_month_path, "converted2")
+    converted_folder = os.path.join(full_month_path, "converted")
     os.makedirs(converted_folder, exist_ok=True)
 
     for file in os.scandir(full_month_path):
