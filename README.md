@@ -12,6 +12,18 @@ This repository contains the implementation of the NLP project. Our task was to 
 - prompts_and_responses.py - generates predicted reports for reference reports in data/chosen_txts/, using relevant data. Results are written in data/results_txt/
 - ft.py - TODO: will include the implementation of fine-tuning
 
+Fine-tuning related code
+- prepare_txt_files_ft.py - converts all reference files from the year 2024 into .txt format.
+- fine_tunning_data_collection.py - collects the data for fine-tuning from the reference reports and generates the next two files.
+  - train_4.jsonl - training data for fine-tuning
+  - val_4.jsonl - validation data for fine-tuning
+- fine_tuning.py - fine-tunes the LLM using the training and validation data.
+- llm_finetune_9/ - the fine-tunned model (needs to be downloaded)
+- evaluation_data_collection.py - collects the data for evaluation from the reference reports.
+  - evaluation.jsonl - data used for the evaluation of the fine-tuned model
+- generate_finetuned_results.py - generates the traffic reports using the fine-tuned model. The results are saved in the data/finetuned_results folder.
+
+
 # Running the code
 
 - First, download the data available at [link](https://unilj-my.sharepoint.com/personal/slavkozitnik_fri1_uni-lj_si/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects%2FRTVSlo%2Ezip&parent=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects&ga=1) and put the contents into the data folder. The path should look like: data/RTVSlo.
