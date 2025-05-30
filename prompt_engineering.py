@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 import torch
-from prompt_input_preparation import prompts_and_responses
+from prompt_input_preparation import inputs_and_responses
 import evaluate
 import gc
 import os
@@ -86,7 +86,7 @@ def executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top
 
 # model_path = "./mistral_7b_local"
 model_path = "./gams_9b_local"
-excel, txts, files = prompts_and_responses(year=2023, chosen_txts_dir='data/2023/')
+excel, txts, files = inputs_and_responses(year=2023, chosen_txts_dir='data/2023/')
 gc.collect()
 torch.cuda.empty_cache()
 torch.cuda.reset_peak_memory_stats()
