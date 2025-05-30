@@ -15,7 +15,7 @@ This repository contains the full implementation of an NLP project developed for
 ### 📝 Prompt engineering Scripts
 - `model_download.py` - Locally downloads the GaMS 9B model (needs 35 GB disk space)
 - `prompt_input_preparation.py` – Fetches inputs required for prompt engineering
-- `prompt_engineering.py` – Runs LLM using a prompt, writing output to `./prompt_engineering_results`
+- `prompt_engineering.py` – Runs LLM using a prompt, writing output to `prompt_engineering_results/`
 
 ### 📦 Fine-tuning Scripts
 
@@ -50,7 +50,17 @@ python extract_data.py
 
 ### 📊 4. Generate Reports
 #### 4.1 Generating Reports with Prompt Engineering 
-- TODO Generating reports with the prompt engineering method: choose the reference reports from the data/txts folder, for which you want to generate new reports. The date and time will be read from the names of the files, which is then used to automatically retrieve relevant data from the excel table. This data is then used to generate new reports, which are then saved in the generate_responses_prompt_engineering/results_txts folder. The data, which was used to generate is also saved in the generate_responses_prompt_engineering/inputs folder.
+1. Download the model:
+```bash
+python model_download.py
+```
+
+2. Run the prompt engineering script on 2023 dataset (must have excel data in `data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx`):
+```bash
+python prompt_engineering.py
+```
+
+Outputs are saved in `prompt_engineering_results/`.
 
 
 #### 4.2 Generating Reports with Fine-tuning
@@ -73,10 +83,9 @@ It will prepare the data based on the references inside the `2023/` folder.
 ```bash
 python generate_finetuned_results.py
 ```
-Outputs are saved in finetuned_results/.
+Outputs are saved in `finetuned_results/`.
 
-
-### 🔧 5. Fine-tuning the Model
+### 🔧 5 Fine-tuning the Model
 1. Prepare .txt reference files:
 ```bash
 python prepare_txt_files_ft.py
@@ -94,17 +103,6 @@ python fine_tuning.py
 
 The trained model will be saved in llm_finetune_9/.
 
-
-### 📝 6. Running prompt engineering
-1. Download the model:
-```bash
-python model_download.py
-```
-
-2. Run the prompt engineering script on 2023 dataset (must have excel data in `data/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx`):
-```bash
-python prompt_engineering.py
-```
 
 ### 📊 Evaluation
 Run rouge.py to compute ROUGE scores between generated outputs and reference reports.
