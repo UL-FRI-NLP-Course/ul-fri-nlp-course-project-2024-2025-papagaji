@@ -6,7 +6,7 @@ This repository contains the full implementation of an NLP project developed for
 
 - `report/report.pdf` – Final project report  
 - `data/` – Raw and processed data used for training, evaluation, and testing  
-- `evalvacija/` – Contains generated predictions and references for evaluation  (old)
+- `evalvacija/` – Contains generated predictions and references for evaluation
 - `extract_data.py` – Converts `.rtf` reference files to `.txt` 
 - `rouge.py` – Computes ROUGE scores to evaluate generated outputs  
 - `ara_2.py` – Prompt-based report generation script  (old)
