@@ -11,10 +11,7 @@ from pathlib import Path
 
 
 def get_excel_data(day,month,year,end_hour,end_minute):
-
     dir = os.path.dirname(__file__) 
-
-
     df = pd.read_excel(os.path.join(dir, 'data/RTVSlo/Podatki - PrometnoPorocilo_2022_2023_2024.xlsx'), sheet_name=str(year))
 
     df['Datum'] = pd.to_datetime(df['Datum'], format='%d.%m.%Y %H:%M:%S')
@@ -87,17 +84,9 @@ def get_excel_data(day,month,year,end_hour,end_minute):
     return out
 
     
-
-    #return "\nDatum: " + datum + "\nUra: " + ura + "\nDela: " + dela + "\nMednarodno: " + mednarodno + "\nNesrece: " + nesrece + "\nOpozorila: " + opozorila + "\nOvir: " + ovire + "\nPomembno: " + pomembno + "\nSplosno: " + splosno + "\nVreme: " + vreme + "\nZastoji: " + zastoji
-
-
-
 def prompts_and_responses():
-
     dir = os.path.dirname(__file__) 
     dir = os.path.join(dir, 'data/txt/')
-
-    test = []
 
     excel_data_list = []
     txt_data_list = []
@@ -124,20 +113,12 @@ def prompts_and_responses():
             if(index == 1):
                 return excel_data_list, txt_data_list
 
-            
-
-
-
-
-
 
 def responses_write_to_file(chosen_txts_dir='generate_responses_prompt_engineering/chosen_txts/',results_dir='generate_responses_prompt_engineering/results_txt/',inputs_dir='generate_responses_prompt_engineering/inputs/',generate_responses=True):
-
     dir_ = os.path.dirname(__file__) 
     dir = os.path.join(dir_, chosen_txts_dir)
 
     write_dir = os.path.join(dir_, results_dir)
-
     write_dir_inputs = os.path.join(dir_, inputs_dir)
 
     index = 0
@@ -154,7 +135,6 @@ def responses_write_to_file(chosen_txts_dir='generate_responses_prompt_engineeri
 
         index += 1
         if file.is_file(): 
-
             day,month,year,time = file.path.rsplit('/', 1)[1].split(".")[0].split("-")
             day = int(day)
             month = int(month)
@@ -164,23 +144,14 @@ def responses_write_to_file(chosen_txts_dir='generate_responses_prompt_engineeri
 
             print(day,month,year,hour,minute)
 
-
             excel_data = get_excel_data(day,month,year,hour,minute)
-
             print("excel:")
             print(excel_data)
 
             result = ""
             if (generate_responses):
                 result = generate(excel_data)
-
-            #print(file.name)
-
-            #txt_data = open(file,encoding="utf-16").read()
-
-
             print(result)
-
             if(generate_responses):
                 try:
                     with open(outfile, "x", encoding="utf-16") as out:
