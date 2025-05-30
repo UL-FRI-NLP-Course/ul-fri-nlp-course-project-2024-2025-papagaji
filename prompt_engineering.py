@@ -1,6 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 import torch
-from vrabec2 import prompts_and_responses
+from prompt_input_preparation import prompts_and_responses
 import evaluate
 import gc
 import os

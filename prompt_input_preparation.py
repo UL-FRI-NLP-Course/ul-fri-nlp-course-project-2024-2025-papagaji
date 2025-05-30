@@ -2,13 +2,9 @@ import pandas as pd
 import os
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
-import json
 import re
 
 def getFromInterval(df, end, rec=0, delta=45):
-    dir = os.path.dirname(__file__) 
-
-    # end_time = datetime(year, month, day, end_hour, end_minute)
     start = end - timedelta(minutes=delta)
     df_interval = df[(df['Datum'] >= start) & (df['Datum'] < end)]
 
@@ -45,7 +41,7 @@ def getFromInterval(df, end, rec=0, delta=45):
     return out
 
 
-def prompts_and_responses(year=2024, chosen_txts_dir='out/chosen_txts/'):
+def prompts_and_responses(year, chosen_txts_dir='out/chosen_txts/'):
     dir = os.path.dirname(__file__) 
     dir_txts = os.path.join(dir, chosen_txts_dir) 
 
@@ -73,7 +69,6 @@ def prompts_and_responses(year=2024, chosen_txts_dir='out/chosen_txts/'):
 
             with open(file, 'r', encoding='utf-16') as file:
                 lines = file.readlines()
-                # lines = file.readlines()[1:]
                 txt_data = ''.join(lines)
                 txt_data_list.append(txt_data)
 
@@ -94,4 +89,3 @@ def extract_cleaned_text(df_rows, column_name):
                         dupli.append(stavki[j])
     unique_texts = list(set(dupli))  # Remove duplicates
     return ' '.join(unique_texts)
-
