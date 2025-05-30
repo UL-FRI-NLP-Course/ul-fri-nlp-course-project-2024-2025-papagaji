@@ -1,11 +1,9 @@
-from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM, AutoConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 import torch
-from vrabec import getFromInterval, prompts_and_responses
+from vrabec2 import prompts_and_responses
 import evaluate
 import gc
 import os
-from datetime import datetime
-from accelerate import init_empty_weights, cpu_offload, load_checkpoint_and_dispatch
 
 print(torch.cuda.is_available())
 torch.cuda.empty_cache()
@@ -15,34 +13,39 @@ def getPromptSLO(data):
 # NAVODILA
 Sestavi prometno poročilo o stanju na slovenskih cestah, ki naj vsebuje vse pomembne informacije podane v vhodnih podatkih.
 Poročilo mora:
-- vsebovati 3 do 5 povedi
-- ne sme biti krajše od 20 besed
-- biti napisano samo v naravni slovenščini
 - povzeti podatke iz vhoda
+- biti napisano samo v naravni slovenščini
 
 Obnovljeni podatki naj imajo naslednjo obliko:
 Cesta in smer + razlog + posledica in odsek
 ali
 Razlog + cesta in smer + posledica in odsek
 
-# Primer vhoda (podatkov) in njegovega izhoda (poročila)
+# Primeri vhoda (podatkov) in njegovega izhoda (poročila)
 # Vhod:
 Nesreče: Cesta Novo mesto - Šentjernej je zaprta pri odcepu za Dolenje Mokro Polje.
-Opozorila: Cesta Rateče - Planica bo zaprta danes do 18. ure
 Ovire: Zaradi vozila v okvari je zaprt en pas na cesti Črnuče - Ljubljana, proti krožišču Tomačevo.
 Zastoji: Na hrvaški strani mejnih prehodov Dragonja in Sečovlje proti Sloveniji.
 Splošno: Do 22. ure velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7,5 t.
-
 # Izhod:
 Cesta Novo mesto - Šentjernej je zaradi prometne nesreče zaprta pri odcepu za Dolenje Mokro Polje.
-Cesta Rateče - Planica bo zaprta še do 18-ih.
 Na cesti Črnuče - Ljubljana je proti krožišču Tomačevo zaradi pokvarjenega vozila zaprt en pas. 
 Pred mejnima prehodoma Dragonja in Sečovlje je zastoj proti Sloveniji.
 Do 22-ih velja omejitev prometa tovornih vozil, katerih največja dovoljena masa presega 7 ton in pol.
 
+# Vhod:
+Opozorila: Cesta Rateče - Planica bo zaprta danes do 18. ure
+Zastoji: Na hrvaški strani mejnih prehodov Dragonja in Sečovlje proti Sloveniji.
+Ovire: Zaprt počasni pas na primorski avtocesti zaradi okvare vozila pri priključku Kastelec proti Ljubljani.
+Dela: Delovne zapore na cesti  Ljubljana - Zagorje: - pri Beričevem bo zaprta do 24. ure.
+# Izhod:
+Cesta Rateče - Planica bo zaprta še do 18-ih.
+Pred mejnima prehodoma Dragonja in Sečovlje je zastoj proti Sloveniji.
+Na primorski avtocesti je zaradi okvare vozila zaprt počasni pas pri priključku Kastelec proti Ljubljani.
+Zaradi del so krajši zastoji na južni ljubljanski obvoznici med priključkoma Rudnik in Center proti Kozarjam.
 
 # NALOGA
-Zdaj v izhodu sestavi prometno poročilo (3 do 5 povedi). Vsebovati mora naslednje vhodne podatke:
+Zdaj v izhodu sestavi prometno poročilo. Vsebovati mora naslednje vhodne podatke:
 # Vhod:
 {data}
 # Izhod:
@@ -60,20 +63,10 @@ def getLLM(model_path):
     return model, tokenizer
 
 
-def executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top_k, repetition_penalty):
+def executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top_k, repetition_penalty, min_new_tokens):
     inputs = tokenizer(prompt, return_tensors="pt", add_special_tokens=True).to("cpu")
-    # try:
-    #     print(f"Shape: {inputs['input_ids'].shape[0]}")
-    #     print(f"Token count: {inputs['input_ids'].shape[1]}")
-    # except:
-    #     print("Inputs error!")
     inputs = inputs.to(model.device) 
-    # inputs = tokenizer(prompt, return_tensors="pt", add_special_tokens=True).to(model.device)
     model.eval()
-    # if tokenizer.eos_token_id is None:
-    #     tokenizer.eos_token_id = tokenizer.convert_tokens_to_ids("<eos>")
-    print(tokenizer.pad_token_id, tokenizer.eos_token_id)
-    print(tokenizer.eos_token)
     with torch.no_grad():
         output = model.generate(
             **inputs,
@@ -82,7 +75,7 @@ def executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top
             do_sample=True,
             top_p=top_p,
             top_k=top_k,
-            min_new_tokens=20,
+            min_new_tokens=min_new_tokens,
             repetition_penalty=repetition_penalty,
             pad_token_id=tokenizer.pad_token_id,
             eos_token_id=tokenizer.eos_token_id
@@ -91,10 +84,9 @@ def executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top
     return result
 
 
-once = True
 # model_path = "./mistral_7b_local"
 model_path = "./gams_9b_local"
-excel, txts, files = prompts_and_responses(chosen_txts_dir='data/txt3/')
+excel, txts, files = prompts_and_responses(year=2023, chosen_txts_dir='data/2023/')
 gc.collect()
 torch.cuda.empty_cache()
 torch.cuda.reset_peak_memory_stats()
@@ -104,17 +96,14 @@ model, tokenizer = getLLM(model_path)
 rouge = evaluate.load("rouge")
 predictions = []
 
-max_new_tokens = 150
-temperature = 0.
+max_new_tokens = 200
+min_new_tokens = 50
+temperature = 0.75
 top_p = 0.9
-top_k = 50
+top_k = 42
 repetition_penalty = 1.12
-# print("beams", 15)
-# print("beam 10, false")
-print("max_new_tokens, temperature, top_p, top_k, repetition_penalty")
-
-
-print(max_new_tokens, temperature, top_p, top_k, repetition_penalty)
+print("max_new_tokens, temperature, top_p, top_k, repetition_penalty, min_new_tokens")
+print(max_new_tokens, temperature, top_p, top_k, repetition_penalty, min_new_tokens)
 print(getPromptSLO(""))
 
 path = os.path.dirname(__file__) 
@@ -126,8 +115,7 @@ for data, txt, file in zip(excel, txts, files):
         print(e)
         print("Could not write file!")
     prompt = getPromptSLO(data)
-    result = executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top_k, repetition_penalty)
-    once = False
+    result = executeLLM(model, tokenizer, prompt, max_new_tokens, temperature, top_p, top_k, repetition_penalty, min_new_tokens)
     result = result.split("\n# Izhod:")[-1].strip()
     print("__________________________________________________")
     print("----------------------OUT-------------------------")
@@ -136,7 +124,7 @@ for data, txt, file in zip(excel, txts, files):
     print(txt)
     print("----------------------DATA------------------------")
     print(data)
-    result = txt.split("\n")[0] + "\nPodatki o prometu.\n" + result
+    result = txt.split("\n")[0] + "\n\nPodatki o prometu.\n\n" + result
     predictions.append(result)
     results = rouge.compute(predictions=[result], references=[txt])
     print("---------------------ROUGE------------------------")

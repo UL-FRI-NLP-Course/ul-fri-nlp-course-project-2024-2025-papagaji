@@ -16,12 +16,12 @@ def getFromInterval(df, end, rec=0, delta=45):
     pomembno = extract_cleaned_text(df_interval, 'ContentPomembnoSLO')
     if pomembno != "":
         out += "Pomembno: " + pomembno + "\n"
-    nesrece = extract_cleaned_text(df_interval, 'ContentNesreceSLO')
-    if nesrece != "":
-        out += "Nesreče: " + nesrece + "\n"
     opozorila = extract_cleaned_text(df_interval, 'ContentOpozorilaSLO')
     if opozorila != "":
         out += "Opozorila: " + opozorila + "\n"
+    nesrece = extract_cleaned_text(df_interval, 'ContentNesreceSLO')
+    if nesrece != "":
+        out += "Nesreče: " + nesrece + "\n"
     zastoji = extract_cleaned_text(df_interval, 'ContentZastojiSLO')
     if zastoji != "":
         out += "Zastoji: " + zastoji + "\n"
