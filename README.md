@@ -38,7 +38,7 @@ pip install -r requirements.txt
 
 ### 🔽 2. Download the Data
 
-Download the dataset from [this link](https://unilj-my.sharepoint.com/personal/slavkozitnik_fri1_uni-lj_si/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects%2FRTVSlo%2Ezip&parent=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects&ga=1) and extract its contents into the `data/` folder.
+Download the dataset from [this link](https://unilj-my.sharepoint.com/personal/slavkozitnik_fri1_uni-lj_si/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects%2FRTVSlo%2Ezip&parent=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects&ga=1) and extract the contents of the RTVSlo folder into the `data/` folder.
 
 ### 📑 3. Convert .RTF Files to .TXT
 Run the following to convert reference `.rtf` reports into `.txt` format:
@@ -72,6 +72,9 @@ Single example generation:
 ```bash
 python generate_finetuned.py
 ```
+
+The report will be printed to the console or in the log file when running on SLURM.
+
 Multiple examples generation:
 1. Prepare the evaluation data:
 ```bash
@@ -101,12 +104,16 @@ This creates train_4.jsonl and val_4.jsonl
 python fine_tuning.py
 ```
 
-The trained model will be saved in llm_finetune_9/.
+The trained model will be saved in `llm_finetune_9/`.
 
 
 ### 📊 Evaluation
-Run rouge.py to compute ROUGE scores between generated outputs and reference reports.
+The script calculates ROUGE scores between the files in the `evalvacija/predictions/` and `evalvacija/references/` directories. Before running the evaluation, make sure the generated reports you want to evaluate are placed in correct folders.
 
+Run the evaluation:
+```bash
+python rouge.py
+```
 
 ### 🖥️ Running on SLURM
 To run scripts on a SLURM-based cluster just change the file you want to run inside the file `run.sh` and set bigger a higher time limit if needed.

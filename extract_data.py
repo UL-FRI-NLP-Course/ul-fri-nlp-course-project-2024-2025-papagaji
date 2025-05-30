@@ -32,7 +32,7 @@ def convertAllRTFtoTXT(indir, outdir):
 
 
 dir = os.path.dirname(__file__) 
-path1 = os.path.join(dir, "data/RTVSlo/Podatki - rtvslo.si")
+path1 = os.path.join(dir, "data/Podatki - rtvslo.si")
 path2 = os.path.join(dir, "data/txts")
 
 
