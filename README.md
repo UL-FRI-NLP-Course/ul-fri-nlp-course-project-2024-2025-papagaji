@@ -1,6 +1,6 @@
 # Natural language processing course: Automatic generation of Slovenian traffic news for RTV Slovenija
 
-This repository contains the implementation of the NLP project. Our task was to leverage prompt engineering techniques to generate short traffic reports for RTV Slovenija. We will also experiment with fine-tuning an LLM for this specific task in the future.
+This repository contains the implementation of the NLP project. Our task was to leverage prompt engineering techniques to generate short traffic reports for RTV Slovenija. We also experimented with fine-tuning an LLM for this task.
 
 - report/report.pdf - report about our implementation of the project
 - data/ - contains the data we used
