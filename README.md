@@ -1,34 +1,111 @@
-# Natural language processing course: Automatic generation of Slovenian traffic news for RTV Slovenija
+# 🛣️ NLP Project: Automatic Generation of Slovenian Traffic News for RTV Slovenija
 
-This repository contains the implementation of the NLP project. Our task was to leverage prompt engineering techniques to generate short traffic reports for RTV Slovenija. We also experimented with fine-tuning an LLM for this task.
+This repository contains the full implementation of an NLP project developed for the Natural Language Processing course. The objective was to automatically generate short Slovenian traffic reports for RTV Slovenija using prompt engineering and fine-tuning of a large language model.
 
-- report/report.pdf - report about our implementation of the project
-- data/ - contains the data we used
-- evalvacija/ - contains folders with data, generated predictions from the data and the reference reports
-- ara_2.py - includes the prompt for generating reports on given data
-- extract_data.py - converts .rtf files to .txt format
-- vrabec.py - extracts the Excel data for a given time period
-- rouge.py - calculates the score metrics for generated reports
-- prompts_and_responses.py - generates predicted reports for reference reports in data/chosen_txts/, using relevant data. Results are written in data/results_txt/
+## 📁 Project Structure
 
-Fine-tuning related code
-- prepare_txt_files_ft.py - converts all reference files from the year 2024 into .txt format.
-- fine_tunning_data_collection.py - collects the data for fine-tuning from the reference reports and generates the next two files.
-  - train_4.jsonl - training data for fine-tuning
-  - val_4.jsonl - validation data for fine-tuning
-- fine_tuning.py - fine-tunes the LLM using the training and validation data.
-- llm_finetune_9/ - the fine-tunned model (needs to be downloaded)
-- evaluation_data_collection.py - collects the data for evaluation from the reference reports.
-  - evaluation.jsonl - data used for the evaluation of the fine-tuned model
-- generate_finetuned_results.py - generates the traffic reports using the fine-tuned model. The results are saved in the data/finetuned_results folder.
+- `report/report.pdf` – Final project report  
+- `data/` – Raw and processed data used for training, evaluation, and testing  
+- `evalvacija/` – Contains generated predictions and references for evaluation  
+- `ara_2.py` – Prompt-based report generation script  
+- `extract_data.py` – Converts `.rtf` reference files to `.txt`  
+- `vrabec.py` – Extracts relevant data from the Excel table for a given time window  
+- `rouge.py` – Computes ROUGE scores to evaluate generated outputs  
+- `prompts_and_responses.py` – Generates reports using prompt engineering with relevant input data  
 
+### 📦 Fine-tuning Scripts
 
-# Running the code
+- `prepare_txt_files_ft.py` – Converts all reference reports (year 2024) into `.txt` format  
+- `fine_tunning_data_collection.py` – Collects training/validation data for fine-tuning  
+  - Outputs: `train_4.jsonl`, `val_4.jsonl`  
+- `fine_tuning.py` – Fine-tunes the LLM on the above dataset  
+- `llm_finetune_9/` – Folder of the fine-tuned model  
+- `evaluation_data_collection.py` – Collects evaluation data from the reference reports from folder `2023/`
+- `generate_finetuned_results.py` – Generates reports using the fine-tuned model on many examples  
+- `generate_finetuned.py` – Generates a report on a single example with the fine-tuned model  
 
-- First, download the data available at [link](https://unilj-my.sharepoint.com/personal/slavkozitnik_fri1_uni-lj_si/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects%2FRTVSlo%2Ezip&parent=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects&ga=1) and put the contents into the data folder. The path should look like: data/RTVSlo.
-- Then run the script extract_data.py, this will convert all reference reports in data from .rtf to .txt format. The converted files are then put into a new folder data/txts.
+## ⚙️ Setup Instructions
+
+### 1. ✅ Dependencies
+Install the required packages:
+```bash
+pip install -r requirements.txt
+```
+
+### 🔽 2. Download the Data
+
+Download the dataset from [this link](https://unilj-my.sharepoint.com/personal/slavkozitnik_fri1_uni-lj_si/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects%2FRTVSlo%2Ezip&parent=%2Fpersonal%2Fslavkozitnik%5Ffri1%5Funi%2Dlj%5Fsi%2FDocuments%2FPredmeti%2FONJ%2FONJ%5F2025%5FSpring%2FProjects&ga=1) and extract its contents into the `data/` folder.
+
+### 📑 3. Convert .RTF Files to .TXT
+Run the following to convert reference `.rtf` reports into `.txt` format:
+
+```bash
+python extract_data.py
+```
+ The converted files are then put into a new folder data/txts.
+
+### 📊 4. Generate Reports
+#### 4.1 Generating Reports with Prompt Engineering 
 - TODO Generating reports with the prompt engineering method: choose the reference reports from the data/txts folder, for which you want to generate new reports. The date and time will be read from the names of the files, which is then used to automatically retrieve relevant data from the excel table. This data is then used to generate new reports, which are then saved in the generate_responses_prompt_engineering/results_txts folder. The data, which was used to generate is also saved in the generate_responses_prompt_engineering/inputs folder.
 
-- To use the fine-tuned model on a single example, you can use the generate_finetuned.py script. You will need to provide the input data in the "data" variable. The script will then generate a traffic report using the fine-tuned model.
-- To use the fine-tunned model on many examples, run evaluation_data_collection.py to collect the data for evaluation and generate evaluation.jsonl (The date and time for the examples is taken from the reference files in the 2023 folder). To generate traffic reports using the fine-tuned model, run generate_finetuned_results.py.
-- To run the fine-tuning code, first run prepare_txt_files_ft.py to convert the reference reports from the year 2024 into .txt format. Then run fine_tunning_data_collection.py to collect the data for fine-tuning and generate the training and validation files. After that, run fine_tuning.py to fine-tune the LLM using the training and validation data.
+
+#### 4.2 Generating Reports with Fine-tuning
+To generate a report using the fine-tuned model for a single input:
+
+Single example generation:
+1. Edit the `data` variable in generate_finetuned.py with your input.
+2. Run the script:
+```bash
+python generate_finetuned.py
+```
+Multiple examples generation:
+1. Prepare the evaluation data:
+```bash
+python evaluation_data_collection.py
+```
+It will prepare the data based on the references inside the `2023/` folder.
+
+2. Generate reports:
+```bash
+python generate_finetuned_results.py
+```
+Outputs are saved in finetuned_results/.
+
+
+### 🔧 5. Fine-tuning the Model
+1. Prepare .txt reference files:
+```bash
+python prepare_txt_files_ft.py
+```
+2. Collect data for training:
+```bash
+python fine_tunning_data_collection.py
+```
+This creates train_4.jsonl and val_4.jsonl
+
+3. Fine-tune the model:
+```bash
+python fine_tuning.py
+```
+
+The trained model will be saved in llm_finetune_9/.
+
+
+### 📊 Evaluation
+Run rouge.py to compute ROUGE scores between generated outputs and reference reports.
+
+
+### 🖥️ Running on SLURM
+To run scripts on a SLURM-based cluster just change the file you want to run inside the file `run.sh` and set bigger a higher time limit if needed.
+After that you just submit the job with the following command:
+```bash
+sbatch run.sh
+```
+
+You can check the status of your job with:
+```bash
+squeue --me
+```
+
+
+
